@@ -1,5 +1,11 @@
 # typescript-fetch
 
+## 0.0.3
+
+### Patch Changes
+
+- [`6b7bc10`](https://github.com/jacob-ebey/typescript-fetch/commit/6b7bc101b17e606b2ba01775e2444e07807c781f) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - add `json()` helper
+
 ## 0.0.2
 
 ### Patch Changes
