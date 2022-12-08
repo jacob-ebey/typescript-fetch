@@ -14,7 +14,7 @@ declare function assertResponse<
   TR2 extends TR = TR
 >(_request: TR2): void;
 
-export function handlerTests() {
+export async function handlerTests() {
   const routes = [
     {
       id: "test",
@@ -56,15 +56,15 @@ export function handlerTests() {
 
   const handler = createHandler(routes);
 
-  assertResponse<TypedResponse<200>>(handler(typeRequest("/")));
-  assertResponse<TypedResponse<201>>(handler(typeRequest("/test")));
+  assertResponse<TypedResponse<200>>(await handler(typeRequest("/")));
+  assertResponse<TypedResponse<201>>(await handler(typeRequest("/test")));
   assertResponse<TypedResponse<202>>(
-    handler(
+    await handler(
       typedRequest<TypedRequest<"GET", inferPath<`/test/:param`>>>("/test/fdsa")
     )
   );
   assertResponse<TypedResponse<203>>(
-    handler(
+    await handler(
       typedRequest<TypedRequest<"POST", inferPath<`/test/:param`>>>(
         "/test/fdsa",
         { method: "POST" }
