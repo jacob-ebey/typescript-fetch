@@ -1,3 +1,5 @@
+import { Jsonifiable, Jsonify } from "type-fest";
+
 export type RequestMethod =
   | "GET"
   | "HEAD"
@@ -112,4 +114,35 @@ export interface TypedResponse<Status extends number>
 export interface TypedResponseJSON<Status extends number, JsonData>
   extends Omit<TypedResponse<Status>, "json"> {
   json(): Promise<JsonData>;
+}
+
+export interface TypedResponseInit<Status extends number>
+  extends globalThis.ResponseInit {
+  status?: Status;
+}
+
+export function json<Data extends Jsonifiable, Status extends number>(
+  data: Data,
+  init: Status
+): TypedResponseJSON<Status, Jsonify<Data>>;
+export function json<Data extends Jsonifiable, Status extends number>(
+  data: Data,
+  init: TypedResponseInit<Status>
+): TypedResponseJSON<Status, Jsonify<Data>>;
+export function json<Data extends Jsonifiable, Status extends 200>(
+  data: Data,
+  init?: never
+): TypedResponseJSON<Status, Jsonify<Data>>;
+export function json<Data extends Jsonifiable, Status extends number>(
+  data: Data,
+  init?: globalThis.ResponseInit | Status
+): TypedResponseJSON<Status, Jsonify<Data>> {
+  init = (typeof init === "number" ? { status: init } : init) || {};
+  const headers = new Headers(init?.headers);
+  init.headers = headers;
+  headers.set("Content-Type", "application/json");
+  return new Response(JSON.stringify(data), init) as TypedResponseJSON<
+    Status,
+    Jsonify<Data>
+  >;
 }

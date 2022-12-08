@@ -6,6 +6,9 @@
   "scripts": {
     "build": "tsc"
   },
+  "dependencies": {
+    "type-fest": "^3.3.0"
+  },
   "devDependencies": {
     "typescript": "^4.9.3"
   }
