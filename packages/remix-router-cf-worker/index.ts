@@ -4,6 +4,8 @@ import {
 } from "@remix-run/router";
 import { TypedRequest } from "typescript-fetch";
 
+export * from "typescript-fetch";
+
 export type DataFunctionArgs<
   Request extends globalThis.Request,
   RequestContext = unknown

@@ -31,7 +31,7 @@ export type inferPath<FullPath extends string> = FullPath extends "/"
 export type PathnameFormat = `/${string}` | `/`;
 
 // TODO: Could be expanded to support things like `file:///` `file:///C:/` `hello:world`
-export type URLFormat<Pathname extends PathnameFormat> =
+type URLFormat<Pathname extends PathnameFormat> =
   `${string}://${string}${Pathname}`;
 
 export interface TypedRequest<
@@ -108,6 +108,7 @@ export interface TypedResponse<Status extends number>
   extends Omit<globalThis.Response, "status"> {
   status: Status;
 }
+
 export interface TypedResponseJSON<Status extends number, JsonData>
   extends Omit<TypedResponse<Status>, "json"> {
   json(): Promise<JsonData>;
