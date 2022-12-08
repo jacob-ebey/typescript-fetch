@@ -1,7 +1,6 @@
 import {
   typeRequest,
   typedRequest,
-  type inferPath,
   type TypedRequest,
   type TypedResponse,
   type TypedResponseJSON,
@@ -20,7 +19,7 @@ export async function handlerTests() {
       id: "test",
       path: "/",
       loader: null as unknown as DataFunction<
-        TypedRequest<"GET", inferPath<"/">>,
+        TypedRequest<"GET", "/">,
         TypedResponse<200>
       >,
     },
@@ -28,7 +27,7 @@ export async function handlerTests() {
       id: "test",
       path: "test",
       loader: null as unknown as DataFunction<
-        TypedRequest<"GET", inferPath<"test">>,
+        TypedRequest<"GET", "test">,
         TypedResponse<201>
       >,
     },
@@ -36,11 +35,11 @@ export async function handlerTests() {
       id: "test",
       path: "test/:param",
       loader: null as unknown as DataFunction<
-        TypedRequest<"GET", inferPath<`test/:param`>>,
+        TypedRequest<"GET", "test/:param">,
         TypedResponse<202>
       >,
       action: null as unknown as DataFunction<
-        TypedRequest<"POST", inferPath<`test/:param`>>,
+        TypedRequest<"POST", "test/:param">,
         TypedResponse<203>
       >,
     },
@@ -48,7 +47,7 @@ export async function handlerTests() {
       id: "test",
       path: ":param",
       loader: null as unknown as DataFunction<
-        TypedRequest<"GET", inferPath<`:param`>>,
+        TypedRequest<"GET", ":param">,
         TypedResponseJSON<204, { test: string }>
       >,
     },
@@ -60,19 +59,18 @@ export async function handlerTests() {
   assertResponse<TypedResponse<201>>(await handler(typeRequest("/test")));
   assertResponse<TypedResponse<202>>(
     await handler(
-      typedRequest<TypedRequest<"GET", inferPath<`/test/:param`>>>("/test/fdsa")
+      typedRequest<TypedRequest<"GET", "/test/:param">>("/test/fdsa")
     )
   );
   assertResponse<TypedResponse<203>>(
     await handler(
-      typedRequest<TypedRequest<"POST", inferPath<`/test/:param`>>>(
-        "/test/fdsa",
-        { method: "POST" }
-      )
+      typedRequest<TypedRequest<"POST", "/test/:param">>("/test/fdsa", {
+        method: "POST",
+      })
     )
   );
   // TODO: Figure out why this is falling into the `/` case
   // assertResponse<TypedResponseJSON<204, { test: string }>>(
-  //   handler(typedRequest<TypedRequest<"GET", inferPath<`:param`>>>("/json"))
+  //   handler(typedRequest<TypedRequest<"GET", ":param">>("/json"))
   // );
 }

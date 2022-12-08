@@ -36,7 +36,7 @@ export type URLFormat<Pathname extends PathnameFormat> =
 
 export interface TypedRequest<
   Method extends RequestMethod,
-  Pathname extends PathnameFormat
+  Pathname extends string
 > extends globalThis.Request {
   method: Method;
   url: URLFormat<inferPath<Pathname>>;
@@ -63,7 +63,7 @@ type inferMethod<RequestInit extends globalThis.RequestInit | undefined> =
 type inferPathnameFromRequestInfo<RequestInfo extends globalThis.RequestInfo> =
   RequestInfo extends `${"http" | "https"}://${string}/${infer Pathname}`
     ? `/${Pathname}`
-    : RequestInfo extends URLFormat<infer Pathname>
+    : RequestInfo extends URLFormat<inferPath<infer Pathname>>
     ? Pathname
     : RequestInfo extends PathnameFormat
     ? RequestInfo
@@ -71,7 +71,7 @@ type inferPathnameFromRequestInfo<RequestInfo extends globalThis.RequestInfo> =
 
 type inferRequestInfo<Request extends TypedRequest<any, any>> =
   Request extends TypedRequest<any, infer Pathname>
-    ? Request["url"] | Pathname
+    ? Request["url"] | inferPath<Pathname>
     : Request["url"];
 
 type inferRequestInit<Request extends TypedRequest<any, any>> =
