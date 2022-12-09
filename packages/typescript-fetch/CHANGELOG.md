@@ -1,5 +1,11 @@
 # typescript-fetch
 
+## 0.0.4
+
+### Patch Changes
+
+- [`3eb5546`](https://github.com/jacob-ebey/typescript-fetch/commit/3eb554685e6490f2b79e574d458deb52e6472b79) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - add typed URL
+
 ## 0.0.3
 
 ### Patch Changes
