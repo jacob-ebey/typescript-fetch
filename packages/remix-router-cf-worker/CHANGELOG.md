@@ -1,5 +1,11 @@
 # remix-router-cf-worker
 
+## 0.0.5
+
+### Patch Changes
+
+- [`8359a60`](https://github.com/jacob-ebey/typescript-fetch/commit/8359a60ade8ede9b4948589762da98d0c457a9d4) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - added service inference
+
 ## 0.0.4
 
 ### Patch Changes
