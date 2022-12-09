@@ -1,5 +1,14 @@
 # remix-router-cf-worker
 
+## 0.0.4
+
+### Patch Changes
+
+- [`c919f34`](https://github.com/jacob-ebey/typescript-fetch/commit/c919f342f0f66c38ad032e6cbbbc3462b056a377) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - handle errors
+
+- Updated dependencies [[`3eb5546`](https://github.com/jacob-ebey/typescript-fetch/commit/3eb554685e6490f2b79e574d458deb52e6472b79)]:
+  - typescript-fetch@0.0.4
+
 ## 0.0.3
 
 ### Patch Changes

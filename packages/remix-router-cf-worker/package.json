@@ -1,6 +1,6 @@
 {
   "name": "remix-router-cf-worker",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -11,6 +11,6 @@
   },
   "dependencies": {
     "@remix-run/router": "1.0.5",
-    "typescript-fetch": "0.0.3"
+    "typescript-fetch": "0.0.4"
   }
 }
