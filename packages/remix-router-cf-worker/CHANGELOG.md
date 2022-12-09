@@ -1,5 +1,11 @@
 # remix-router-cf-worker
 
+## 0.0.6
+
+### Patch Changes
+
+- [`6933990`](https://github.com/jacob-ebey/typescript-fetch/commit/6933990b24461109cac88765b1f76d81bc27f794) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - add params to data func
+
 ## 0.0.5
 
 ### Patch Changes
