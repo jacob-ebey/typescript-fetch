@@ -78,7 +78,7 @@ export interface TypedFormData<Key extends string> extends globalThis.FormData {
 export interface TypedRequest<
   Method extends RequestMethod,
   Pathname extends string,
-  SearchParamKeys extends string = string,
+  _SearchParamKeys extends string = string,
   FormDataKeys extends string = string
 > extends globalThis.Request {
   method: Method;

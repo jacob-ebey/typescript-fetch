@@ -70,6 +70,17 @@ type inferDataFunctionsFromRouteConfig<
   | inferActionFunctionFromConfig<Config>
   | inferLoaderFunctionFromConfig<Config>;
 
+export type inferServiceType<Config extends RouteConfig<any, any, any>> = {
+  fetch<Request extends TypedRequest<any, any>>(
+    request: Request
+  ): Promise<
+    inferTypedResponseFromDataFuncs<
+      inferDataFunctionsFromRouteConfig<Config>,
+      Request
+    >
+  >;
+};
+
 export function createHandler<
   Config extends RouteConfig<any, any, RequestContext>,
   RequestContext
