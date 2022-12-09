@@ -1,8 +1,9 @@
 import {
+  isRouteErrorResponse,
   unstable_createStaticHandler,
   type AgnosticNonIndexRouteObject,
 } from "@remix-run/router";
-import { TypedRequest } from "typescript-fetch";
+import { json, TypedRequest } from "typescript-fetch";
 
 export * from "typescript-fetch";
 
@@ -18,12 +19,6 @@ export type DataFunction<
   Response extends globalThis.Response,
   RequestContext = unknown
 > = (args: DataFunctionArgs<Request, RequestContext>) => Promise<Response>;
-
-type ValidateShape<T, Shape> = T extends Shape
-  ? Exclude<keyof T, keyof Shape> extends never
-    ? T
-    : never
-  : never;
 
 type inferTypedResponseFromDataFuncs<
   DataFunc extends DataFunction<any, any, any>,
@@ -90,15 +85,23 @@ export function createHandler<
   ): Promise<inferTypedResponseFromDataFuncs<DataFuncs, Request>> => {
     type InferredType = inferTypedResponseFromDataFuncs<DataFuncs, Request>;
 
-    const context = await handler.queryRoute(request, {
-      requestContext,
-    });
+    try {
+      const context = await handler.queryRoute(request, {
+        requestContext,
+      });
 
-    if (isResponse(context)) {
       return context as InferredType;
+    } catch (reason) {
+      if (isResponse(reason)) {
+        return reason as InferredType;
+      }
+      if (isRouteErrorResponse(reason)) {
+        return json(reason.data, {
+          status: reason.status,
+        }) as InferredType;
+      }
+      throw reason;
     }
-
-    throw context;
   };
 }
 
