@@ -36,12 +36,54 @@ export type PathnameFormat = `/${string}` | `/`;
 type URLFormat<Pathname extends PathnameFormat> =
   `${string}://${string}${Pathname}`;
 
+export interface TypedURLSearchParams<Key extends string>
+  extends globalThis.URLSearchParams {
+  append(name: Key, value: string): void;
+  delete(name: Key): void;
+  get(name: Key): string | null;
+  getAll(name: Key): string[];
+  has(name: Key): boolean;
+  set(name: Key, value: string): void;
+}
+
+export interface TypedURL<
+  Pathname extends PathnameFormat,
+  SearchParamKeys extends string
+> {
+  href: URLFormat<Pathname>;
+  searchParams: TypedURLSearchParams<SearchParamKeys>;
+}
+
+export function typedURL<Request extends TypedRequest<any, any>>(
+  request: Request
+) {
+  return new URL(request.url) as Request extends TypedRequest<
+    any,
+    infer Pathname,
+    infer SearchParamKeys
+  >
+    ? TypedURL<inferPath<Pathname>, SearchParamKeys>
+    : unknown;
+}
+
+export interface TypedFormData<Key extends string> extends globalThis.FormData {
+  append(key: Key, value: FormDataEntryValue, fileName?: string): void;
+  delete(key: Key): void;
+  get(key: Key): FormDataEntryValue | null;
+  getAll(key: Key): FormDataEntryValue[];
+  has(key: Key): boolean;
+  set(key: Key, value: FormDataEntryValue, fileName?: string): void;
+}
+
 export interface TypedRequest<
   Method extends RequestMethod,
-  Pathname extends string
+  Pathname extends string,
+  SearchParamKeys extends string = string,
+  FormDataKeys extends string = string
 > extends globalThis.Request {
   method: Method;
   url: URLFormat<inferPath<Pathname>>;
+  formData(): Promise<TypedFormData<FormDataKeys>>;
 }
 
 export type TypedRequestInfo<Pathname extends PathnameFormat> =
