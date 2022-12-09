@@ -2,6 +2,7 @@ import {
   isRouteErrorResponse,
   unstable_createStaticHandler,
   type AgnosticNonIndexRouteObject,
+  type Params,
 } from "@remix-run/router";
 import { json, TypedRequest } from "typescript-fetch";
 
@@ -12,6 +13,7 @@ export type DataFunctionArgs<
   RequestContext = unknown
 > = {
   context: RequestContext;
+  params: Params;
   request: Request;
 };
 export type DataFunction<
