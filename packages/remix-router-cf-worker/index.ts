@@ -148,7 +148,7 @@ type Handler<
 
 export function createHandler<
   Config extends RouteConfig<any, any, RequestContext>,
-  RequestContext = never
+  RequestContext = unknown
 >(routes: Config[]): inferHandler<Config, RequestContext> {
   const handler = unstable_createStaticHandler(routes);
 
