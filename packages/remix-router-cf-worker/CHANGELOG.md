@@ -1,5 +1,11 @@
 # remix-router-cf-worker
 
+## 0.0.7
+
+### Patch Changes
+
+- [`2dc1740`](https://github.com/jacob-ebey/typescript-fetch/commit/2dc1740e1a963d7e611affb6611c288ec587c024) Thanks [@jacob-ebey](https://github.com/jacob-ebey)! - updated types
+
 ## 0.0.6
 
 ### Patch Changes
