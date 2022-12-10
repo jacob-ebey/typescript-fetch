@@ -16,7 +16,7 @@ declare function assertResponse<
 export async function handlerTests() {
   const routes = [
     {
-      id: "test",
+      id: "/",
       path: "/",
       loader: null as unknown as DataFunction<
         TypedRequest<"GET", "/">,
@@ -32,7 +32,7 @@ export async function handlerTests() {
       >,
     },
     {
-      id: "test",
+      id: "test/:param",
       path: "test/:param",
       loader: null as unknown as DataFunction<
         TypedRequest<"GET", "test/:param">,
@@ -44,7 +44,7 @@ export async function handlerTests() {
       >,
     },
     {
-      id: "test",
+      id: ":param",
       path: ":param",
       loader: null as unknown as DataFunction<
         TypedRequest<"GET", ":param">,
@@ -55,22 +55,29 @@ export async function handlerTests() {
 
   const handler = createHandler(routes);
 
-  assertResponse<TypedResponse<200>>(await handler(typeRequest("/")));
-  assertResponse<TypedResponse<201>>(await handler(typeRequest("/test")));
-  assertResponse<TypedResponse<202>>(
-    await handler(
-      typedRequest<TypedRequest<"GET", "/test/:param">>("/test/fdsa")
-    )
+  let a = await handler(typeRequest("/"));
+  //  ^?
+  assertResponse<TypedResponse<200>>(a);
+
+  let b = await handler(typeRequest("/test"));
+  //  ^?
+  assertResponse<TypedResponse<201>>(b);
+
+  let c = await handler(
+    //^?
+    typedRequest<TypedRequest<"GET", "/test/:param">>("/test/fdsa")
   );
-  assertResponse<TypedResponse<203>>(
-    await handler(
-      typedRequest<TypedRequest<"POST", "/test/:param">>("/test/fdsa", {
-        method: "POST",
-      })
-    )
+  assertResponse<TypedResponse<202>>(c);
+
+  let d = await handler(
+    //^?
+    typedRequest<TypedRequest<"POST", "/test/:param">>("/test/fdsa", {
+      method: "POST",
+    })
   );
-  // TODO: Figure out why this is falling into the `/` case
-  // assertResponse<TypedResponseJSON<204, { test: string }>>(
-  //   handler(typedRequest<TypedRequest<"GET", ":param">>("/json"))
-  // );
+  assertResponse<TypedResponse<203>>(d);
+
+  let e = await handler(typedRequest<TypedRequest<"GET", ":param">>("/json"));
+  //  ^?
+  assertResponse<TypedResponseJSON<204, { test: string }>>(e);
 }

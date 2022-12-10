@@ -4,7 +4,7 @@ import {
   type AgnosticNonIndexRouteObject,
   type Params,
 } from "@remix-run/router";
-import { json, TypedRequest } from "typescript-fetch";
+import { json, TypedRequest, TypedResponse } from "typescript-fetch";
 
 export * from "typescript-fetch";
 
@@ -17,7 +17,7 @@ export type DataFunctionArgs<
   request: Request;
 };
 export type DataFunction<
-  Request extends globalThis.Request,
+  Request extends TypedRequest<any, any>,
   Response extends globalThis.Response,
   RequestContext = unknown
 > = (args: DataFunctionArgs<Request, RequestContext>) => Promise<Response>;
@@ -83,39 +83,99 @@ export type inferServiceType<Config extends RouteConfig<any, any, any>> = {
   >;
 };
 
-export function createHandler<
+type inferActionHandlerConfig<
+  Config extends RouteConfig<any, any, any>,
+  RequestContext
+> = Config extends { action: infer DataFunc }
+  ? DataFunc extends DataFunction<infer Request, infer Response, any>
+    ? Handler<Request, Response, RequestContext>
+    : Handler<any, any, any>
+  : Handler<any, any, any>;
+type inferLoaderHandlerConfig<
+  Config extends RouteConfig<any, any, any>,
+  RequestContext
+> = Config extends { loader: infer DataFunc }
+  ? DataFunc extends DataFunction<infer Request, infer Response, any>
+    ? Handler<Request, Response, RequestContext>
+    : Handler<any, any, any>
+  : Handler<any, any, any>;
+type inferHandlerFromConfig<
+  Config extends RouteConfig<any, any, any>,
+  RequestContext
+> =
+  | inferActionHandlerConfig<Config, RequestContext>
+  | inferLoaderHandlerConfig<Config, RequestContext>;
+
+type Test = inferHandlerFromConfig<
+  | {
+      path: "/";
+      loader: DataFunction<TypedRequest<"GET", "/">, TypedResponse<200>>;
+    }
+  | {
+      path: "/test";
+      action: DataFunction<TypedRequest<"POST", "/">, TypedResponse<201>>;
+    },
+  unknown
+>;
+
+type inferHandler<
   Config extends RouteConfig<any, any, RequestContext>,
   RequestContext
->(routes: Config[], requestContext?: RequestContext) {
-  type DataFuncs = inferDataFunctionsFromRouteConfig<Config>;
+> = inferHandlerFromConfig<Config, RequestContext>;
 
-  // TODO: Implement the handler
+class Hidden {}
+
+export type Matches<T, S> = [T] extends [S]
+  ? [S] extends [T]
+    ? [Hidden] extends [T]
+      ? [Hidden] extends [S]
+        ? true // For <any, any>
+        : false // For <any, S>
+      : [Hidden] extends [S]
+      ? false // For <T, any>
+      : true // For <T === S>
+    : false // For <T sub S>
+  : false; // For <T !== S> or <S sub T>
+
+type Handler<
+  Request extends TypedRequest<any, any>,
+  Response extends TypedResponse<any>,
+  RequestContext
+> = <T extends globalThis.Request>(
+  request: T,
+  requestContext?: RequestContext
+) => Matches<typeof request, Request> extends true ? Promise<Response> : never;
+
+export function createHandler<
+  Config extends RouteConfig<any, any, RequestContext>,
+  RequestContext = never
+>(routes: Config[]): inferHandler<Config, RequestContext> {
   const handler = unstable_createStaticHandler(routes);
 
-  return async <Request extends TypedRequest<any, any>>(
-    request: Request,
-    requestContext?: RequestContext
-  ): Promise<inferTypedResponseFromDataFuncs<DataFuncs, Request>> => {
-    type InferredType = inferTypedResponseFromDataFuncs<DataFuncs, Request>;
-
+  const wrappedHandler = async (
+    request: globalThis.Request,
+    requestContext?: unknown
+  ) => {
     try {
       const context = await handler.queryRoute(request, {
         requestContext,
       });
 
-      return context as InferredType;
+      return context as any;
     } catch (reason) {
       if (isResponse(reason)) {
-        return reason as InferredType;
+        return reason as any;
       }
       if (isRouteErrorResponse(reason)) {
         return json(reason.data, {
           status: reason.status,
-        }) as InferredType;
+        }) as any;
       }
       throw reason;
     }
   };
+
+  return wrappedHandler as inferHandler<Config, RequestContext>;
 }
 
 function isResponse(value: any): value is Response {
