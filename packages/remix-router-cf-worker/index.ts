@@ -106,18 +106,6 @@ type inferHandlerFromConfig<
   | inferActionHandlerConfig<Config, RequestContext>
   | inferLoaderHandlerConfig<Config, RequestContext>;
 
-type Test = inferHandlerFromConfig<
-  | {
-      path: "/";
-      loader: DataFunction<TypedRequest<"GET", "/">, TypedResponse<200>>;
-    }
-  | {
-      path: "/test";
-      action: DataFunction<TypedRequest<"POST", "/">, TypedResponse<201>>;
-    },
-  unknown
->;
-
 type inferHandler<
   Config extends RouteConfig<any, any, RequestContext>,
   RequestContext
